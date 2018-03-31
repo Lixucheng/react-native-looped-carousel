@@ -44,8 +44,8 @@ export default class Carousel extends Component {
     arrowStyle: Text.propTypes.style,
     leftArrowStyle: Text.propTypes.style,
     rightArrowStyle: Text.propTypes.style,
-    leftArrowText: PropTypes.string,
-    rightArrowText: PropTypes.string,
+    leftArrowText: PropTypes.any,
+    rightArrowText: PropTypes.any,
     chosenBulletStyle: Text.propTypes.style,
     onAnimateNextPage: PropTypes.func,
     swipe: PropTypes.bool,
@@ -242,22 +242,27 @@ export default class Carousel extends Component {
     if (currentPage >= childrenLength) {
       currentPage = this.props.isLooped ? 0 : childrenLength - 1;
     }
-    if (currentPage === 0) {
-      // animate properly based on direction
-      const scrollMultiplier = this.state.currentPage === 1 && childrenLength !== 2 ? 1 : -1;
-      this._scrollTo({
-        offset: (childrenLength + (1 * scrollMultiplier)) * width,
-        animated: false,
-        nofix: true,
-      });
-      this._scrollTo({ offset: childrenLength * width, animated: true });
-    } else if (currentPage === 1) {
-      const scrollMultiplier = this.state.currentPage === 0 ? 0 : 2;
-      this._scrollTo({ offset: width * scrollMultiplier, animated: false, nofix: true });
-      this._scrollTo({ offset: width, animated: true });
+    if (this.props.isLooped) {
+      if (currentPage === 0) {
+        // animate properly based on direction
+        const scrollMultiplier = this.state.currentPage === 1 && childrenLength !== 2 ? 1 : -1;
+        this._scrollTo({
+          offset: (childrenLength + (1 * scrollMultiplier)) * width,
+          animated: false,
+          nofix: true,
+        });
+        this._scrollTo({ offset: childrenLength * width, animated: true });
+      } else if (currentPage === 1) {
+        const scrollMultiplier = this.state.currentPage === 0 ? 0 : 2;
+        this._scrollTo({ offset: width * scrollMultiplier, animated: false, nofix: true });
+        this._scrollTo({ offset: width, animated: true });
+      } else {
+        this._scrollTo({ offset: currentPage * width, animated: true });
+      }
     } else {
       this._scrollTo({ offset: currentPage * width, animated: true });
     }
+    
     this._setCurrentPage(currentPage);
     this._setUpTimer();
   }
